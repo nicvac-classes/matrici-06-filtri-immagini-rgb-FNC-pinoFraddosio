@@ -8,49 +8,150 @@ class Esercizio {
 
     //Elimina le componenti Verde e Blu, lasciando solo il Rosso
     public static void filtroRosso( int[][] R, int[][] G, int[][] B ) {
-        // TODO: Implementare il filtro
-        // Suggerimento: azzerare i valori di G e B per ogni pixel
+
+        int row = R.length;
+        int col = R[0].length;
+
+        for(int i = 0; i < row; ++i){
+            for(int j = 0; j < col; ++j){
+                G[i][j] = 0;
+                B[i][j] = 0;
+            }
+        }
+
     }
     
     //Bianco e nero: R, G, B impostati alla media dei valori
     public static void filtroBW( int[][] R, int[][] G, int[][] B ) {
-        // TODO: Implementare il filtro
-        // Suggerimento: calcolare la media di R, G, B e assegnarla a tutti e tre i canali
+        
+        int row = R.length;
+        int col = R[0].length;
+
+        for(int i = 0; i < row; ++i){
+            for(int j = 0; j < col; ++j){
+                int media = (R[i][j] + G[i][j] + B[i][j]) / 3;
+
+                R[i][j] = media;
+                G[i][j] = media;
+                B[i][j] = media;
+            }
+        }
     }
 
     //I pixel vicino al centro hanno più luminosità
     public static void filtroCentro(int[][] R, int[][] G, int[][] B) {
-        // TODO: Implementare il filtro
-        // Suggerimento: calcolare la distanza di ogni pixel dal centro
-        // e moltiplicare i valori RGB per un fattore proporzionale
+        int centroRow = (R.length) / 2;
+        int centroCol = (R[0].length) / 2;
+
+        double maxDistanza = Math.sqrt(centroRow * centroRow + centroCol + centroCol);
+
+        int row = R.length;
+        int col = R[0].length;
+
+        for(int i = 0; i < row; ++i){
+            for(int j = 0; j < col; ++j){
+                double distanzaRow = Math.abs(i - centroRow);
+                double distanzaCol = Math.abs(j - centroCol);
+
+                double distanza = Math.sqrt(distanzaRow * distanzaRow + distanzaCol * distanzaCol);
+
+                double cambioIntensita = 1.0 - (distanza/maxDistanza);
+
+                R[i][j] *= cambioIntensita;
+                G[i][j] *= cambioIntensita;
+                B[i][j] *= cambioIntensita;
+            }
+        }
     }
 
     //Effetto glitch (rosso e blu sfasati)
     public static void filtroGlitch(int[][] R, int[][] G, int[][] B) {
-        // TODO: Implementare il filtro
-        // Suggerimento: creare copie di R e B, poi spostare i pixel
-        // rossi in alto a sinistra e i blu in basso a destra
+        int row = R.length;
+        int col = R[0].length;
+
+        int[][] Bnew = new int[row][col];
+        int[][] Rnew = new int[row][col];
+
+        for(int i = 0; i < row; ++i){
+            for(int j = 0; j < col; ++j){
+                Bnew[i][j] = B[i][j];
+                Rnew[i][j] = R[i][j];
+
+                B[i][j] = 0;
+                R[i][j] = 0;
+            }
+        }
+
+        int offset = 20;
+
+        for(int i = 0; i < row; ++i){
+            for(int j = 0; j < col; ++j){
+                int offsetRowRosso = i - offset;
+                int offsetColRosso = j - offset;
+
+                int offsetRowBlu = i + offset;
+                int offsetColBlu = j + offset;
+
+                if(offsetRowBlu < row && offsetColBlu < col){
+                    B[offsetRowBlu][offsetColBlu] = Bnew[i][j];
+                }
+
+                if(offsetRowRosso >= 0 && offsetColRosso >= 0){
+                    R[offsetRowRosso][offsetColRosso] = Rnew[i][j];
+                }
+            }
+        }
     }
 
     //Oscura i pixel che non sono Mare (prevalenza blu)
     public static void filtroMare(int[][] R, int[][] G, int[][] B) {
-        // TODO: Implementare il filtro
-        // Suggerimento: un pixel è "mare" se R<127, G<127, B>=127
-        // Oscurare (azzerare) i pixel che non soddisfano la condizione
+      
+        int row = R.length;
+        int col = R[0].length;
+
+        for(int i = 0; i < row; ++i){
+            for(int j = 0; j < col; ++j){
+                if(!(R[i][j] < 127 && G[i][j] < 127 && B[i][j] >= 127)){
+                    R[i][j] = 0;
+                    G[i][j] = 0;
+                    B[i][j] = 0;
+                }
+            }
+        }
     }
 
     //Oscura i pixel che non sono Spiaggia (prevalenza giallo)
     public static void filtroSpiaggia(int[][] R, int[][] G, int[][] B) {
-        // TODO: Implementare il filtro
-        // Suggerimento: un pixel è "spiaggia" se R>=127, G>=127, B<127
-        // Oscurare (azzerare) i pixel che non soddisfano la condizione
+     
+        int row = R.length;
+        int col = R[0].length;
+
+        for(int i = 0; i < row; ++i){
+            for(int j = 0; j < col; ++j){
+                if(!(R[i][j] >= 127 && G[i][j] >= 127 && B[i][j] < 127)){
+                    R[i][j] = 0;
+                    G[i][j] = 0;
+                    B[i][j] = 0;
+                }
+            }
+        }
     }
 
     //Oscura i pixel che non sono Vegetazione (prevalenza verde)
     public static void filtroVegetazione(int[][] R, int[][] G, int[][] B) {
-        // TODO: Implementare il filtro
-        // Suggerimento: un pixel è "vegetazione" se R<100, G>=100, B<100
-        // Oscurare (azzerare) i pixel che non soddisfano la condizione
+
+        int row = R.length;
+        int col = R[0].length;
+
+        for(int i = 0; i < row; ++i){
+            for(int j = 0; j < col; ++j){
+                if(!(R[i][j] < 100 && G[i][j] >= 100 && B[i][j] < 100)){
+                    R[i][j] = 0;
+                    G[i][j] = 0;
+                    B[i][j] = 0;
+                }
+            }
+        }
     }
 
     
@@ -75,13 +176,159 @@ class Esercizio {
             //Chiama qui la funzione filtro, passando come parametri le matrici R,G,B da modificare, ad es.:
             //filtroRosso(R, G, B);
             //___
-
+            filtroRosso(R, G, B);
             //Assegna il nome del file di output (immagine con filtro), ad es. "faro_rosso.png":
-            String nomeFileOut = "___";
+            String nomeFileOut = "filtro_rosso.png";
 
             ImageRGB.writeRGB(R, G, B, nomeFileOut);
  
         } catch( Exception e) {
+            e.printStackTrace();
+        }
+
+        try{
+            String nomeFileIn = "faro";
+
+            ImageRGB.RGB rgb = ImageRGB.extractRGB("immagini/" + nomeFileIn + ".png");
+            int[][] R = rgb.R();
+            int[][] G = rgb.G();
+            int[][] B = rgb.B();
+
+            String nomeFileOut = "filtro_BW.png";
+
+            filtroBW(R, G, B);
+
+            ImageRGB.writeRGB(R, G, B, nomeFileOut);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        try{
+
+            String nomeFileIn = "faro";
+
+            ImageRGB.RGB rgb = ImageRGB.extractRGB("immagini/" + nomeFileIn + ".png");
+            int[][] R = rgb.R();
+            int[][] G = rgb.G();
+            int[][] B = rgb.B();
+
+            String nomeFileOut = "filtro_centro.png";
+
+            filtroCentro(R, G, B);
+
+            ImageRGB.writeRGB(R, G, B, nomeFileOut);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        
+
+        try{
+
+            String nomeFileIn = "faro";
+
+            ImageRGB.RGB rgb = ImageRGB.extractRGB("immagini/" + nomeFileIn + ".png");
+            int[][] R = rgb.R();
+            int[][] G = rgb.G();
+            int[][] B = rgb.B();
+
+            String nomeFileOut = "filtro_centro.png";
+
+            filtroCentro(R, G, B);
+
+            ImageRGB.writeRGB(R, G, B, nomeFileOut);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        try{
+
+            String nomeFileIn = "faro";
+
+            ImageRGB.RGB rgb = ImageRGB.extractRGB("immagini/" + nomeFileIn + ".png");
+            int[][] R = rgb.R();
+            int[][] G = rgb.G();
+            int[][] B = rgb.B();
+
+            String nomeFileOut = "filtro_centro_e_BW.png";
+
+            filtroBW(R, G, B);
+            filtroCentro(R, G, B);
+
+            ImageRGB.writeRGB(R, G, B, nomeFileOut);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        try{
+
+            String nomeFileIn = "faro";
+
+            ImageRGB.RGB rgb = ImageRGB.extractRGB("immagini/" + nomeFileIn + ".png");
+            int[][] R = rgb.R();
+            int[][] G = rgb.G();
+            int[][] B = rgb.B();
+
+            String nomeFileOut = "filtro_glitch.png";
+
+            filtroGlitch(R, G, B);
+
+            ImageRGB.writeRGB(R, G, B, nomeFileOut);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        try{
+
+            String nomeFileIn = "foto_aerea";
+
+            ImageRGB.RGB rgb = ImageRGB.extractRGB("immagini/" + nomeFileIn + ".png");
+            int[][] R = rgb.R();
+            int[][] G = rgb.G();
+            int[][] B = rgb.B();
+
+            String nomeFileOut = "filtro_mare.png";
+
+            filtroMare(R, G, B);
+
+            ImageRGB.writeRGB(R, G, B, nomeFileOut);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+
+        try{
+
+            String nomeFileIn = "foto_aerea";
+
+            ImageRGB.RGB rgb = ImageRGB.extractRGB("immagini/" + nomeFileIn + ".png");
+            int[][] R = rgb.R();
+            int[][] G = rgb.G();
+            int[][] B = rgb.B();
+
+            String nomeFileOut = "filtro_spiaggia.png";
+
+            filtroSpiaggia(R, G, B);
+
+            ImageRGB.writeRGB(R, G, B, nomeFileOut);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        try{
+
+            String nomeFileIn = "foto_aerea";
+
+            ImageRGB.RGB rgb = ImageRGB.extractRGB("immagini/" + nomeFileIn + ".png");
+            int[][] R = rgb.R();
+            int[][] G = rgb.G();
+            int[][] B = rgb.B();
+
+            String nomeFileOut = "filtro_vegetazione.png";
+
+            filtroVegetazione(R, G, B);
+
+            ImageRGB.writeRGB(R, G, B, nomeFileOut);
+        }catch(Exception e){
             e.printStackTrace();
         }
     }
