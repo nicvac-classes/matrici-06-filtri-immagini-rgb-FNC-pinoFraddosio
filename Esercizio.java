@@ -43,7 +43,7 @@ class Esercizio {
         int centroRow = (R.length) / 2;
         int centroCol = (R[0].length) / 2;
 
-        double maxDistanza = Math.sqrt(centroRow * centroRow + centroCol + centroCol);
+        double maxDistanza = Math.sqrt(centroRow * centroRow + centroCol * centroCol);
 
         int row = R.length;
         int col = R[0].length;
