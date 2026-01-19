@@ -43,19 +43,18 @@ class Esercizio {
         int centroRow = (R.length) / 2;
         int centroCol = (R[0].length) / 2;
 
-        double maxDistanza = Math.sqrt(centroRow * centroRow + centroCol * centroCol);
-
         int row = R.length;
         int col = R[0].length;
 
+        double distanzaMax = Math.sqrt(Math.pow(centroRow, 2) + Math.pow(centroCol, 2));
+
         for(int i = 0; i < row; ++i){
             for(int j = 0; j < col; ++j){
-                double distanzaRow = Math.abs(i - centroRow);
-                double distanzaCol = Math.abs(j - centroCol);
+               
 
-                double distanza = Math.sqrt(distanzaRow * distanzaRow + distanzaCol * distanzaCol);
+                double d = Math.sqrt(Math.pow(i-centroRow,2) + Math.pow(j-centroCol, 2)) / distanzaMax;
 
-                double cambioIntensita = 1.0 - (distanza/maxDistanza);
+                double cambioIntensita = 1 - d;
 
                 R[i][j] *= cambioIntensita;
                 G[i][j] *= cambioIntensita;
